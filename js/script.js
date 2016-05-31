@@ -23,8 +23,20 @@ function loadData() {
     console.log(streetviewUrl);
     $body.append('<img class="bgimg" src=' + streetviewUrl + ' />');
     
-    
-    
+    var nytUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + cityStr + '$sort=newest&api-key=xx';
+    $.getJSON(nytUrl, function(data) {
+       $nytHeaderElem.text('New York Times Articles About ' + cityStr);
+       var articles = data.response.docs;
+       for (var i = 1; i < articles.length; i++) {
+           var article = articles[i];
+           $nytElem.append('<li class="article">' + 
+            '<a href=' + article.web_url  + ' />' + article.headline.main + '</a>'
+            + '<p>' + article.snippet + '</p>'
+            + '</li>' );
+       }
+    }).error(function(error) {
+        $nytHeaderElem.text('Not able to retrieve articles!');
+    });
     
     
     return false;
